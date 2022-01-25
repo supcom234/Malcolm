@@ -99,6 +99,7 @@ In short, Malcolm provides an easily deployable network analysis tool suite for 
 * [Installation example using Ubuntu 20.04 LTS](#InstallationExample)
 * [Upgrading Malcolm](#UpgradePlan)
 * [Modifying or Contributing to Malcolm](#Contributing)
+* [Forks](#Forks)
 * [Copyright](#Footer)
 * [Contact](#Contact)
 
@@ -3781,11 +3782,24 @@ The Malcolm project uses [semantic versioning](https://semver.org/) when choosin
 
 If you are interested in contributing to the Malcolm project, please read the [Malcolm Contributor Guide](./docs/contributing/README.md).
 
+## <a name="Forks"></a>Forks
+
+[CISA](https://www.cisa.gov/) maintains the upstream source code repository for Malcolm at [https://github.com/cisagov/Malcolm](https://github.com/cisagov/Malcolm). The [Idaho National Lab](https://inl.gov/)'s fork of Malcolm, which is currently kept up-to-date with CISA's upstream development, can be found at [https://github.com/idaholab/Malcolm](https://github.com/idaholab/Malcolm).
+
 ## <a name="Footer"></a>Copyright
 
 [Malcolm](https://github.com/idaholab/Malcolm) is Copyright 2022 Battelle Energy Alliance, LLC, and is developed and released through the cooperation of the [Cybersecurity and Infrastructure Security Agency](https://www.cisa.gov/) of the [U.S. Department of Homeland Security](https://www.dhs.gov/).
 
 See [`License.txt`](./License.txt) for the terms of its release.
+
+## Other Software
+
+Idaho National Laboratory is a cutting edge research facility which is constantly producing high quality research and software. Feel free to take a look at our other software and scientific offerings at:
+
+* [Primary Technology Offerings Page](https://www.inl.gov/inl-initiatives/technology-deployment)
+* [Supported Open Source Software](https://github.com/idaholab)
+* [Raw Experiment Open Source Software](https://github.com/IdahoLabResearch)
+* [Unsupported Open Source Software](https://github.com/IdahoLabCuttingBoard)
 
 ## <a name="Contact"></a>Contact information of author(s):
 
