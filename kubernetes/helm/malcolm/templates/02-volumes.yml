@@ -1,0 +1,103 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pcap-claim
+  namespace: malcolm
+spec:
+  storageClassName: {{ .Values.storage.className }}
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zeek-claim
+  namespace: malcolm
+spec:
+  storageClassName: {{ .Values.storage.className }}
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 50Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: suricata-claim
+  namespace: malcolm
+spec:
+  storageClassName: {{ .Values.storage.className }}
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 50Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: config-claim
+  namespace: malcolm
+spec:
+  storageClassName: {{ .Values.storage.className }}
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 25Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: runtime-logs-claim
+  namespace: malcolm
+spec:
+  storageClassName: {{ .Values.storage.className }}
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 25Gi  
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: opensearch-claim
+  namespace: malcolm
+spec:
+  storageClassName: {{ .Values.storage.className }}
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 100Gi  
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: opensearch-backup-claim
+  namespace: malcolm
+spec:
+  storageClassName: {{ .Values.storage.className }}
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 100Gi  
