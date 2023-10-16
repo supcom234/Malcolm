@@ -1,0 +1,463 @@
+{{- if .Values.ingress.enabled }}
+---
+apiVersion: v1
+data:
+  nginx.conf: |
+    # Copyright (c) 2023 Battelle Energy Alliance, LLC.  All rights reserved.
+
+    daemon off;
+
+    worker_processes 1;
+
+    events { worker_connections 1024; }
+
+    http {
+
+      include /etc/nginx/mime.types;
+      sendfile on;
+
+      client_max_body_size 20m;
+
+      fastcgi_buffers 16 64k;
+      fastcgi_buffer_size 256k;
+      fastcgi_read_timeout 300s;
+      fastcgi_busy_buffers_size 384k;
+      fastcgi_request_buffering off;
+
+      proxy_connect_timeout 180s;
+      proxy_read_timeout 300s;
+      proxy_send_timeout 300s;
+      proxy_buffer_size 512k;
+      proxy_buffers 16 4m;
+      proxy_busy_buffers_size 16m;
+
+      # if LDAP authentication is enabled, this will configure the ldap_server section
+      include /etc/nginx/nginx_ldap_rt.conf;
+
+      upstream arkime {
+        server arkime:8005;
+      }
+
+      upstream api {
+        server api:5000;
+      }
+
+      upstream upload {
+        server upload:80;
+      }
+
+      upstream htadmin {
+        server htadmin:80;
+      }
+
+      upstream dashboards {
+        server dashboards:5601;
+      }
+
+      upstream dashboards-maps {
+        server dashboards-helper:28991;
+      }
+
+      upstream opensearch {
+        server opensearch:9200;
+      }
+
+      upstream logstash-stats {
+        server logstash:9600;
+      }
+
+      upstream netbox {
+        server netbox:8080;
+      }
+
+      upstream extracted-file-http-server {
+        server file-monitor:8440;
+      }
+
+      # health check ("here I am") without authentication
+      server {
+        listen 8443;
+        include /etc/nginx/nginx_ssl_config.conf;
+
+        location / {
+          add_header Content-Type text/plain;
+          return 200 'Malcolm\n';
+        }
+      }
+
+      # Main web interface
+      server {
+        listen 443;
+        include /etc/nginx/nginx_ssl_config.conf;
+
+        # favicon, logos, banners, etc.
+        include /etc/nginx/nginx_image_aliases.conf;
+
+        # HTTP basic user management (doesn't use nginx_auth_rt as it does its own auth directly)
+        location /auth {
+          proxy_pass http://htadmin;
+          proxy_redirect off;
+          proxy_set_header Accept-Encoding "";
+          proxy_set_header Host htadmin.malcolm.local;
+          rewrite ^/auth/?(.*) /$1 break;
+          subs_filter_types '*';
+          subs_filter '(src|action|href)="([\w\.-]+\.(php|css|js))' '$1="/auth/$2' gir;
+          subs_filter 'href="styles/' 'href="/auth/styles/' gi;
+          subs_filter 'src="script/' 'src="/auth/script/' gi;
+          subs_filter '/fonts/glyphicons' '/auth/fonts/glyphicons' gi;
+        }
+        location ~* ^/(htadmin|admin_login)(\.php)\b(.*) {
+          proxy_pass http://htadmin/$1$2$3;
+          proxy_redirect off;
+          proxy_set_header Accept-Encoding "";
+          proxy_set_header Host htadmin.malcolm.local;
+          subs_filter_types '*';
+          subs_filter '(src|action|href)="([\w\.-]+\.(php|css|js))' '$1="/auth/$2' gir;
+          subs_filter 'href="styles/' 'href="/auth/styles/' gi;
+          subs_filter 'src="script/' 'src="/auth/script/' gi;
+          subs_filter '/fonts/glyphicons' '/auth/fonts/glyphicons' gi;
+        }
+
+        # Malcolm readme
+        location /readme {
+          include /etc/nginx/nginx_auth_rt.conf;
+          root /usr/share/nginx/html;
+          try_files $uri $uri/index.html;
+        }
+
+        # Malcolm file upload
+        location /upload {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_http_version 1.1;
+          proxy_set_header Connection "";
+          rewrite ^/upload(.*)/?$ /$1 break;
+          proxy_pass http://upload;
+          proxy_redirect off;
+          proxy_set_header Host upload.malcolm.local;
+          proxy_request_buffering off;
+          proxy_buffering off;
+          client_max_body_size 50G;
+        }
+        location /server/php {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_http_version 1.1;
+          proxy_set_header Connection "";
+          proxy_pass http://upload/server/php;
+          proxy_redirect off;
+          proxy_set_header Host upload.malcolm.local;
+          proxy_request_buffering off;
+          proxy_buffering off;
+          client_max_body_size 50G;
+        }
+
+        # Logstash statistics
+        location ~* ^/logstash\b(.*) {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_pass http://logstash-stats/_node/stats$1;
+          proxy_redirect off;
+          proxy_set_header Host arkime.malcolm.local;
+        }
+
+        # Arkime -> Dashboards shortcut
+        location ~* ^/idark2dash(.*) {
+          include /etc/nginx/nginx_auth_rt.conf;
+          set $filter_start_time now-1d;
+          if ($arg_start != '') {
+            set $filter_start_time \'$arg_start\';
+          }
+
+          set $filter_stop_time now;
+          if ($arg_stop != '') {
+            set $filter_stop_time \'$arg_stop\';
+          }
+
+          set $filter_field undefined;
+          if ($arg_field != '') {
+            set $filter_field $arg_field;
+          }
+
+          set $filter_value undefined;
+          if ($arg_value != '') {
+            set $filter_value $arg_value;
+          }
+
+          rewrite ^/idark2dash/(.*) /dashboards/app/discover#/?_g=(refreshInterval:(pause:!t,value:0),time:(from:$filter_start_time,mode:absolute,to:$filter_stop_time))&_a=(columns:!(_source),filters:!((meta:(alias:!n,disabled:!f,index:'sessions2-*',key:$filter_field,negate:!f,params:(query:'$filter_value',type:phrase),type:phrase,value:'$filter_value'),query:(match:($filter_field:(query:'$filter_value',type:phrase))))),index:'sessions2-*',interval:auto,query:(language:lucene,query:''),sort:!(firstPacket,desc)) redirect;
+          proxy_pass http://dashboards;
+          proxy_redirect off;
+          proxy_set_header Host dashboards.malcolm.local;
+        }
+
+        # Dashboards -> Arkime shortcut
+        location ~* /iddash2ark/(.*) {
+          rewrite ^.*/iddash2ark/(.*) /sessions?expression=($1) redirect;
+          proxy_pass https://arkime;
+          proxy_ssl_verify off;
+          proxy_redirect off;
+          proxy_set_header Host arkime.malcolm.local;
+          proxy_set_header http_auth_http_user $authenticated_user;
+          proxy_set_header Authorization "";
+        }
+
+        # Dashboards/Arkime -> extracted file download
+        location ~* /dl-extracted-files/(.*) {
+          rewrite ^.*/dl-extracted-files/(.*) /extracted-files/$1 redirect;
+          proxy_pass http://extracted-file-http-server;
+          proxy_redirect off;
+          proxy_set_header Host file-monitor.malcolm.local;
+        }
+
+        # already prepended /dashboards to match the server.basePath in OpenSearch Dashboards's YML config file
+        location /dashboards {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_pass http://dashboards;
+          proxy_redirect off;
+          proxy_set_header Host dashboards.malcolm.local;
+        }
+
+        # offline region maps for dashboards
+        location /world.geojson {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_pass http://dashboards-maps;
+          proxy_redirect off;
+          proxy_set_header Host dashboards-helper.malcolm.local;
+        }
+
+        location ~* ^/extracted-files\b(.*) {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_pass http://extracted-file-http-server$1;
+          proxy_redirect off;
+          proxy_set_header Host file-monitor.malcolm.local;
+        }
+
+        # netbox
+        location /netbox {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_pass http://netbox;
+          proxy_redirect off;
+          proxy_set_header Host netbox.malcolm.local;
+          proxy_set_header X-Forwarded-Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Remote-Auth $authenticated_user;
+        }
+
+        # Fix cyberchef JS module(s)
+        # https://localhost/arkime/session/190924-KgO9H30qhdREw7ltsDXn1Rgp/modules/Regex.js
+        location ~* ^/arkime/session/.*/(modules/.*\.js) {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_hide_header Content-Type;
+          proxy_set_header Content-Type "application/javascript";
+          add_header Content-Type "application/javascript";
+          default_type application/javascript;
+          add_header X-Content-Type-Options 'nosniff';
+          proxy_pass https://arkime/cyberchef/$1;
+          proxy_ssl_verify off;
+          proxy_redirect off;
+          proxy_set_header Host arkime.malcolm.local;
+          proxy_set_header http_auth_http_user $authenticated_user;
+          proxy_set_header Authorization "";
+        }
+
+        # Malcolm API
+        location /mapi {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_pass http://api;
+          proxy_redirect off;
+          proxy_set_header Host api.malcolm.local;
+        }
+
+        # Arkime
+        location / {
+          include /etc/nginx/nginx_auth_rt.conf;
+          proxy_pass https://arkime;
+          proxy_ssl_verify off;
+          proxy_redirect off;
+          proxy_set_header Host arkime.malcolm.local;
+          proxy_set_header http_auth_http_user $authenticated_user;
+          proxy_set_header Authorization "";
+        }
+      }
+
+      # OpenSearch API
+      server {
+        listen 9200;
+        include /etc/nginx/nginx_ssl_config.conf;
+
+        # use either auth_basic or auth_ldap
+        include /etc/nginx/nginx_auth_rt.conf;
+
+        # favicon, logos, banners, etc.
+        include /etc/nginx/nginx_image_aliases.conf;
+
+        location / {
+          proxy_pass http://opensearch;
+          proxy_redirect off;
+          proxy_set_header Host os.malcolm.local;
+          client_max_body_size 50m;
+        }
+      }
+
+    }
+kind: ConfigMap
+metadata:
+  name: etc-nginx
+  namespace: malcolm
+
+---
+apiVersion: v1
+data:
+  dhparam.pem: |
+    -----BEGIN DH PARAMETERS-----
+    MIIBCAKCAQEAhD5j8rafW4xp9A051TheGvYVW8mLEhAPUQkdZTYEEt2R3P4SyJEs
+    oppZMiNnPyjEdhtLyjahrvZjXVLRSI2b9kJ+Dqn05kWdn3n5YyMiaGdWnrq+7nfp
+    QWa9rXnJ/BS7vwrLQTjNKomri38WoIozgQydW+7tdyHs97RyoCVU3ZCMI2fMZxCg
+    GdHOwwKVmnd1o30MNMlHM0h1CZQSVYaf7CFn8i4X0qVSBPNs1nNZoRsEo7E8htAK
+    fiuwrQbl+jQXd95dw9lVJZPwU52uyQ8ENcNGfxI4jQPOs3Qi1BvmSfHUgAmQvW8t
+    nugt+x79zXs2Ju7NE7Sq4sSfzSo2BIf5xwIBAg==
+    -----END DH PARAMETERS-----
+kind: ConfigMap
+metadata:
+  name: etc-nginx-certs-pem
+  namespace: malcolm  
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-proxy
+  namespace: malcolm
+spec:
+  # use "type: ClusterIP" if using Ingress-NGINX as illustrated in 99-ingress-nginx.yml.example
+  # use "type: LoadBalancer" if using AWS Load Balancer as illustrated in 99-ingress-alb.yml.example
+  type: ClusterIP
+  ports:
+    - port: 443
+      protocol: TCP
+      name: https
+    - port: 8443
+      protocol: TCP
+      name: http
+    - port: 9200
+      protocol: TCP
+      name: opensearch
+  selector:
+    name: nginx-proxy-deployment
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-proxy-deployment
+  namespace: malcolm
+spec:
+  selector:
+    matchLabels:
+      name: nginx-proxy-deployment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: nginx-proxy-deployment
+    spec:
+      containers:
+      - name: nginx-proxy-container
+        image: "{{ .Values.image.repository }}/nginx-proxy:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        stdin: false
+        tty: true
+        ports:
+          - name: https
+            protocol: TCP
+            containerPort: 443
+          - name: http
+            protocol: TCP
+            containerPort: 8443
+          - name: opensearch
+            protocol: TCP
+            containerPort: 9200
+        envFrom:
+          - configMapRef:
+              name: process-env
+          - configMapRef:
+              name: ssl-env
+          - configMapRef:
+              name: auth-common-env
+          - configMapRef:
+              name: nginx-env
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 15
+          successThreshold: 1
+          failureThreshold: 10
+        volumeMounts:
+        - name: nginx-etc-nginx-volume
+          mountPath: /etc/nginx/configmap
+        - name: nginx-etc-nginx-secret-volume
+          mountPath: /etc/nginx/secretmap
+        - name: nginx-var-local-catrust-volume
+          mountPath: /var/local/ca-trust/configmap
+        - name: nginx-etc-nginx-certs-secret-volume
+          mountPath: /etc/nginx/certs/secretmap
+        - name: nginx-etc-nginx-certs-pem-volume
+          mountPath: /etc/nginx/dhparam/configmap
+        - name: nginx-opensearch-curlrc-secret-volume
+          mountPath: /var/local/curlrc/secretmap
+        - name: nginx-etc-auth-volume
+          mountPath: /etc/nginx/auth
+          subPath: "auth"
+        - name: nginx-etc-auth-default-secret-volume
+          mountPath: /tmp/auth/default/secretmap
+        - name: nginx-runtime-logs-volume
+          mountPath: /var/log/nginx
+          subPath: "nginx"
+      initContainers:
+      - name: nginx-dirinit-container
+        image: "{{ .Values.image.repository }}/dirinit:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        stdin: false
+        tty: true
+        envFrom:
+          - configMapRef:
+              name: process-env
+        env:
+          - name: PUSER_MKDIR
+            value: "/data/config:auth;/data/runtime-logs:nginx"
+        volumeMounts:
+          - name: nginx-etc-auth-volume
+            mountPath: "/data/config"
+          - name: nginx-runtime-logs-volume
+            mountPath: "/data/runtime-logs"
+      volumes:
+      - name: nginx-etc-nginx-volume
+        configMap:
+          name: etc-nginx
+      - name: nginx-etc-nginx-secret-volume
+        secret:
+          secretName: etc-nginx
+      - name: nginx-var-local-catrust-volume
+        configMap:
+          name: var-local-catrust
+      - name: nginx-etc-nginx-certs-secret-volume
+        secret:
+          secretName: etc-nginx-certs
+      - name: nginx-etc-nginx-certs-pem-volume
+        configMap:
+          name: etc-nginx-certs-pem
+      - name: nginx-opensearch-curlrc-secret-volume
+        secret:
+          secretName: opensearch-curlrc
+      - name: nginx-etc-auth-volume
+        persistentVolumeClaim:
+          claimName: config-claim
+      - name: nginx-etc-auth-default-secret-volume
+        secret:
+          secretName: etc-nginx-auth
+      - name: nginx-runtime-logs-volume
+        persistentVolumeClaim:
+          claimName: runtime-logs-claim
+{{- end }}
