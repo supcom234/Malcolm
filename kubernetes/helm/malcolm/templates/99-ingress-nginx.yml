@@ -1,18 +1,9 @@
 {{- if .Values.ingress.enabled }}
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  creationTimestamp: null
-  name: ingress-nginx
-spec: {}
-status: {}
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nginx-ingress
-  namespace: malcolm
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/backend-protocol: "https"
@@ -27,7 +18,6 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-
 spec:
   rules:
   - http:

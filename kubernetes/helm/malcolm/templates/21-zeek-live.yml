@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: zeek-live-deployment
-  namespace: malcolm
+  
 spec:
   selector:
     matchLabels:

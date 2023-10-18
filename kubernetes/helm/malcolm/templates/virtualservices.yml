@@ -1,0 +1,82 @@
+{{- if .Values.istio.enabled }}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: kibana
+spec:
+  gateways:
+  - {{ .Values.istio.gateway }}
+  hosts:
+  - malcolm-kibana.{{ .Values.domain }}
+  http:
+  - route:
+    - destination:
+        host: dashboards.malcolm.svc.cluster.local
+        port:
+          number: 5601
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: arkime
+spec:
+  gateways:
+  - {{ .Values.istio.gateway }}
+  hosts:
+  - malcolm-arkime.{{ .Values.domain }}
+  http:
+  - route:
+    - destination:
+        host: arkime.malcolm.svc.cluster.local
+        port:
+          number: 8005
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: upload
+spec:
+  gateways:
+  - {{ .Values.istio.gateway }}
+  hosts:
+  - malcolm-upload.{{ .Values.domain }}
+  http:
+  - route:
+    - destination:
+        host: upload.malcolm.svc.cluster.local
+        port:
+          number: 80
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: netbox
+spec:
+  gateways:
+  - {{ .Values.istio.gateway }}
+  hosts:
+  - malcolm-netbox.{{ .Values.domain }}
+  http:
+  - route:
+    - destination:
+        host: netbox.malcolm.svc.cluster.local
+        port:
+          number: 8080
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: htadmin
+spec:
+  gateways:
+  - {{ .Values.istio.gateway }}
+  hosts:
+  - malcolm-htadmin.{{ .Values.domain }}
+  http:
+  - route:
+    - destination:
+        host: htadmin.malcolm.svc.cluster.local
+        port:
+          number: 80
+{{- end }}

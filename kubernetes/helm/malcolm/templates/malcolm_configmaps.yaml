@@ -6,11 +6,7 @@ data:
   OPENSEARCH_MAX_SHARDS_PER_NODE: "2500"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
-  name: arkime-env
-  namespace: malcolm
-  resourceVersion: "75118"
-  uid: 2da3eae2-c7c4-4102-8503-80358700aff5
+  name: arkime-env    
 
 ---
 apiVersion: v1
@@ -22,11 +18,7 @@ data:
   NGINX_LDAP_TLS_STUNNEL_VERIFY_LEVEL: "2"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: auth-common-env
-  namespace: malcolm
-  resourceVersion: "75137"
-  uid: 7014dbe1-184f-486d-8e3a-f15069aa5b62
 
 ---
 apiVersion: v1
@@ -34,11 +26,7 @@ data:
   BEATS_SSL: "true"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: beats-common-env
-  namespace: malcolm
-  resourceVersion: "75128"
-  uid: a8d1c1f8-326e-4c8d-8f2f-7a9db6d4af9f
 
 ---
 apiVersion: v1
@@ -50,11 +38,7 @@ data:
   OPENSEARCH_INDEX_SIZE_PRUNE_NAME_SORT: "false"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: dashboards-helper-env
-  namespace: malcolm
-  resourceVersion: "75113"
-  uid: 2c3f56f3-130d-4696-a76a-8d84dc1c0fd6
 
 ---
 apiVersion: v1
@@ -357,13 +341,10 @@ data:
     }
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: etc-nginx
-  namespace: malcolm
-  resourceVersion: "75095"
-  uid: 4f9267f2-e8c8-414a-9ced-d812f00accfc
 
 ---
+
 apiVersion: v1
 data:
   dhparam.pem: |
@@ -376,12 +357,8 @@ data:
     Vyoi3N+QwxlHRX9nGWlEVefrGVEN7WKBLwIBAg==
     -----END DH PARAMETERS-----
 kind: ConfigMap
-metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
+metadata:  
   name: etc-nginx-certs-pem
-  namespace: malcolm
-  resourceVersion: "75098"
-  uid: e3710725-585c-4a3e-9358-61a8c77624b2
 
 ---
 apiVersion: v1
@@ -405,11 +382,8 @@ data:
   FILEBEAT_WATCHER_POLLING_ASSUME_CLOSED_SEC: "10"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: filebeat-env
-  namespace: malcolm
-  resourceVersion: "75139"
-  uid: b140128c-a6be-4f6b-adc8-20aa61b2aa36
+
 
 ---
 apiVersion: v1
@@ -441,73 +415,67 @@ data:
 
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: htadmin-config
-  namespace: malcolm
-  resourceVersion: "75112"
-  uid: d6908d5c-d167-49ae-9472-cca7b1ec1eb8
+  
 
 ---
-apiVersion: v1
-data:
-  root-cert.pem: |
-    -----BEGIN CERTIFICATE-----
-    MIIC/TCCAeWgAwIBAgIRAKvOgkO24UlmUJAzx09aOucwDQYJKoZIhvcNAQELBQAw
-    GDEWMBQGA1UEChMNY2x1c3Rlci5sb2NhbDAeFw0yMzEwMTYxNzE5MjlaFw0zMzEw
-    MTMxNzE5MjlaMBgxFjAUBgNVBAoTDWNsdXN0ZXIubG9jYWwwggEiMA0GCSqGSIb3
-    DQEBAQUAA4IBDwAwggEKAoIBAQCnbBf6brg2s/ys4N8P+A2g2znaBrt4mCUUgRM1
-    TbQC4OKMbL2QUrckigv6sXK8D/mnQTlzbU3V5H4Xg3Fm62ELwqFVMI85D3Zmbc9L
-    CVHjBndxKBNW5eo67m/LrY/45+SGb15HPYYHkDin/6VYkA63UEPJpLrPri9g+Rj6
-    zfY8OZdoBAwifAAKaDitWFKD4i0YJXtzUXhC/XVGMMahsO8M4Sr62vjOknGK7zQj
-    u4I47oD4lILF+2DpjWuWYCwfk+e1KnxhH5VUmtSCJM7xI2OM/2Ft9dZymMSpR2Vz
-    LAwjDfHkqk2WfC1GUHwbysewWU6Cc8mSB44W5RqU4hWRIEWlAgMBAAGjQjBAMA4G
-    A1UdDwEB/wQEAwICBDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSJafa+1clX
-    +tdEDz8XUwHGYtcHgzANBgkqhkiG9w0BAQsFAAOCAQEAcNtGgEoqNA/ZremOiEyq
-    pMJ0Tc0L0jWksn5RwCBTkgPHjhA9lY7OI4PfZGcAVPpFr/3yov5upRHRC8S2Q8fu
-    MAWOPvFWrPkd/EhUeWkJVXAKYW8jtuRMw7LfllKjgWiPrcDeZOk+HUZoT+34PJR9
-    D67MtMvKYzNVpr3ZErSNiSwwl723rDpumXUvP8kV2+DLiEnX0SpMK58ZiQJFl4Pl
-    lOkalxFX+dgPiSguwsEsKELbZEtuq5aZu2zjuM7KMBGgLeNs1Oq0woUvyOKXPsSr
-    UcfddF9Zc71yqG8Zxdeqn5ngMjwYscaNuHefDanOTsetbQhAExTpYbQUC3RjUvMs
-    zA==
-    -----END CERTIFICATE-----
-kind: ConfigMap
-metadata:
-  creationTimestamp: "2023-10-16T20:04:00Z"
-  labels:
-    istio.io/config: "true"
-  name: istio-ca-root-cert
-  namespace: malcolm
-  resourceVersion: "74973"
-  uid: 9ae7175b-838e-45ce-be3f-01273529beed
+# apiVersion: v1
+# data:
+#   root-cert.pem: |
+#     -----BEGIN CERTIFICATE-----
+#     MIIC/TCCAeWgAwIBAgIRAKvOgkO24UlmUJAzx09aOucwDQYJKoZIhvcNAQELBQAw
+#     GDEWMBQGA1UEChMNY2x1c3Rlci5sb2NhbDAeFw0yMzEwMTYxNzE5MjlaFw0zMzEw
+#     MTMxNzE5MjlaMBgxFjAUBgNVBAoTDWNsdXN0ZXIubG9jYWwwggEiMA0GCSqGSIb3
+#     DQEBAQUAA4IBDwAwggEKAoIBAQCnbBf6brg2s/ys4N8P+A2g2znaBrt4mCUUgRM1
+#     TbQC4OKMbL2QUrckigv6sXK8D/mnQTlzbU3V5H4Xg3Fm62ELwqFVMI85D3Zmbc9L
+#     CVHjBndxKBNW5eo67m/LrY/45+SGb15HPYYHkDin/6VYkA63UEPJpLrPri9g+Rj6
+#     zfY8OZdoBAwifAAKaDitWFKD4i0YJXtzUXhC/XVGMMahsO8M4Sr62vjOknGK7zQj
+#     u4I47oD4lILF+2DpjWuWYCwfk+e1KnxhH5VUmtSCJM7xI2OM/2Ft9dZymMSpR2Vz
+#     LAwjDfHkqk2WfC1GUHwbysewWU6Cc8mSB44W5RqU4hWRIEWlAgMBAAGjQjBAMA4G
+#     A1UdDwEB/wQEAwICBDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSJafa+1clX
+#     +tdEDz8XUwHGYtcHgzANBgkqhkiG9w0BAQsFAAOCAQEAcNtGgEoqNA/ZremOiEyq
+#     pMJ0Tc0L0jWksn5RwCBTkgPHjhA9lY7OI4PfZGcAVPpFr/3yov5upRHRC8S2Q8fu
+#     MAWOPvFWrPkd/EhUeWkJVXAKYW8jtuRMw7LfllKjgWiPrcDeZOk+HUZoT+34PJR9
+#     D67MtMvKYzNVpr3ZErSNiSwwl723rDpumXUvP8kV2+DLiEnX0SpMK58ZiQJFl4Pl
+#     lOkalxFX+dgPiSguwsEsKELbZEtuq5aZu2zjuM7KMBGgLeNs1Oq0woUvyOKXPsSr
+#     UcfddF9Zc71yqG8Zxdeqn5ngMjwYscaNuHefDanOTsetbQhAExTpYbQUC3RjUvMs
+#     zA==
+#     -----END CERTIFICATE-----
+# kind: ConfigMap
+# metadata:
+#   creationTimestamp: "2023-10-16T20:04:00Z"
+#   annotations:
+#     meta.helm.sh/release-name: malcolm
+#   labels:
+#     istio.io/config: "true"
+#     app.kubernetes.io/managed-by: "Helm"
+#   name: istio-ca-root-cert
 
----
-apiVersion: v1
-data:
-  ca.crt: |
-    -----BEGIN CERTIFICATE-----
-    MIIBeTCCAR+gAwIBAgIBADAKBggqhkjOPQQDAjAkMSIwIAYDVQQDDBlya2UyLXNl
-    cnZlci1jYUAxNjk3NDcxODMxMB4XDTIzMTAxNjE1NTcxMVoXDTMzMTAxMzE1NTcx
-    MVowJDEiMCAGA1UEAwwZcmtlMi1zZXJ2ZXItY2FAMTY5NzQ3MTgzMTBZMBMGByqG
-    SM49AgEGCCqGSM49AwEHA0IABEgG4gh6Nl5e+PwDbg8rs9L2nwX3uBtCye6lA2DI
-    Ptqb0FLMjbzImK+aQrlELCJYaR9TdcyV2s8o4Bpd2rdETD6jQjBAMA4GA1UdDwEB
-    /wQEAwICpDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTnFPdbK4PhV+kDH1XD
-    XdMWAZUPbjAKBggqhkjOPQQDAgNIADBFAiBJEgGmdK/uvNGjDSsyzaHxV98/TnO9
-    h9sRv6PJzAJnjQIhAK0NnOfvlBOfPwDphDgl42haKRVg67WHQxFw+N41kd1J
-    -----END CERTIFICATE-----
-kind: ConfigMap
-metadata:
-  annotations:
-    kubernetes.io/description: Contains a CA bundle that can be used to verify the
-      kube-apiserver when using internal endpoints such as the internal service IP
-      or kubernetes.default.svc. No other usage is guaranteed across distributions
-      of Kubernetes clusters.
-  creationTimestamp: "2023-10-16T20:04:00Z"
-  name: kube-root-ca.crt
-  namespace: malcolm
-  resourceVersion: "74974"
-  uid: 690e95f5-a326-43de-a147-b1cbf02755c9
+# ---
+# apiVersion: v1
+# data:
+#   ca.crt: |
+#     -----BEGIN CERTIFICATE-----
+#     MIIBeTCCAR+gAwIBAgIBADAKBggqhkjOPQQDAjAkMSIwIAYDVQQDDBlya2UyLXNl
+#     cnZlci1jYUAxNjk3NDcxODMxMB4XDTIzMTAxNjE1NTcxMVoXDTMzMTAxMzE1NTcx
+#     MVowJDEiMCAGA1UEAwwZcmtlMi1zZXJ2ZXItY2FAMTY5NzQ3MTgzMTBZMBMGByqG
+#     SM49AgEGCCqGSM49AwEHA0IABEgG4gh6Nl5e+PwDbg8rs9L2nwX3uBtCye6lA2DI
+#     Ptqb0FLMjbzImK+aQrlELCJYaR9TdcyV2s8o4Bpd2rdETD6jQjBAMA4GA1UdDwEB
+#     /wQEAwICpDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTnFPdbK4PhV+kDH1XD
+#     XdMWAZUPbjAKBggqhkjOPQQDAgNIADBFAiBJEgGmdK/uvNGjDSsyzaHxV98/TnO9
+#     h9sRv6PJzAJnjQIhAK0NnOfvlBOfPwDphDgl42haKRVg67WHQxFw+N41kd1J
+#     -----END CERTIFICATE-----
+# kind: ConfigMap
+# metadata:
+#   annotations:
+#     kubernetes.io/description: Contains a CA bundle that can be used to verify the
+#       kube-apiserver when using internal endpoints such as the internal service IP
+#       or kubernetes.default.svc. No other usage is guaranteed across distributions
+#       of Kubernetes clusters.
+#     meta.helm.sh/release-name: malcolm
+#   name: kube-root-ca.crt
 
----
+# ---
 apiVersion: v1
 data:
   LOGSTASH_NETBOX_AUTO_POPULATE: "true"
@@ -522,11 +490,8 @@ data:
   pipeline.workers: "6"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: logstash-env
-  namespace: malcolm
-  resourceVersion: "75122"
-  uid: 1fde355c-c96c-4074-bca3-600b98b2d77d
+  
 
 ---
 apiVersion: v1
@@ -4397,7 +4362,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: logstash-maps
-  namespace: malcolm
+  
   resourceVersion: "75103"
   uid: e961c7c3-7d30-4e4e-8a91-e5683f2e9c98
 
@@ -4413,7 +4378,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: lookup-common-env
-  namespace: malcolm
+  
   resourceVersion: "75120"
   uid: 37ff459d-5f76-43ae-86ea-66cbc763cdb2
 
@@ -4429,7 +4394,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: netbox-common-env
-  namespace: malcolm
+  
   resourceVersion: "75131"
   uid: 85b8834b-7948-4a57-a4c1-a7a281d5fc4a
 
@@ -4895,7 +4860,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: netbox-config
-  namespace: malcolm
+  
   resourceVersion: "75109"
   uid: 7cf4729c-c2b8-4921-892d-8efce5057d07
 
@@ -4950,7 +4915,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: netbox-env
-  namespace: malcolm
+  
   resourceVersion: "75135"
   uid: 2b2fef42-f381-4f8b-892d-27adcb979b44
 
@@ -4962,7 +4927,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: netbox-netmap-json
-  namespace: malcolm
+  
   resourceVersion: "75108"
   uid: f055fc06-81e7-4d4b-97e1-1e9bb72c2bda
 
@@ -5557,7 +5522,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: netbox-preload
-  namespace: malcolm
+  
   resourceVersion: "75110"
   uid: 9feac871-4a71-4ce5-abef-c8e472d0a111
 
@@ -5570,7 +5535,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: nginx-env
-  namespace: malcolm
+  
   resourceVersion: "75132"
   uid: 65884867-7faa-4449-82e5-64d44c23133d
 
@@ -5599,7 +5564,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: opensearch-env
-  namespace: malcolm
+  
   resourceVersion: "75121"
   uid: b2b860a6-f3dd-4869-a58a-fc4215d5bac9
 
@@ -5617,7 +5582,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: pcap-capture-env
-  namespace: malcolm
+  
   resourceVersion: "75117"
   uid: 5fd35c2e-b9ac-4096-ab97-0b1627ab2cd1
 
@@ -5632,7 +5597,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: process-env
-  namespace: malcolm
+  
   resourceVersion: "75123"
   uid: e2395a30-4761-48b8-85b6-9dc726c2a803
 
@@ -5644,7 +5609,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: ssl-env
-  namespace: malcolm
+  
   resourceVersion: "75125"
   uid: a5ddab0c-c91f-441f-b42b-a5bb0cd128c8
 
@@ -5659,7 +5624,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: suricata-env
-  namespace: malcolm
+  
   resourceVersion: "75130"
   uid: 97b99096-37c3-4797-a856-c0d35a2e2e2d
 
@@ -5673,7 +5638,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: suricata-live-env
-  namespace: malcolm
+  
   resourceVersion: "75136"
   uid: 44fad4e0-f2b5-4461-911e-c7a997702c78
 
@@ -5688,7 +5653,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: suricata-offline-env
-  namespace: malcolm
+  
   resourceVersion: "75119"
   uid: ea7cbc20-9a4b-415b-bb44-ce31ccfb3442
 
@@ -5698,7 +5663,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: suricata-rules
-  namespace: malcolm
+  
   resourceVersion: "75106"
   uid: d15069a9-c1f6-42c2-a4e9-0d8057b75709
 
@@ -5718,7 +5683,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: upload-common-env
-  namespace: malcolm
+  
   resourceVersion: "75126"
   uid: 550a3b32-33bc-4493-98e9-b47e5700e87e
 
@@ -5728,7 +5693,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: var-local-catrust
-  namespace: malcolm
+  
   resourceVersion: "75096"
   uid: 95c8507b-1b28-4024-bbba-df256cc39093
 
@@ -5738,7 +5703,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: yara-rules
-  namespace: malcolm
+  
   resourceVersion: "75105"
   uid: ccd1ae2d-3235-4865-9837-12cfbc55f698
 
@@ -5802,7 +5767,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: zeek-env
-  namespace: malcolm
+  
   resourceVersion: "75115"
   uid: 0e276773-0dbd-49b3-bc59-2c605ffd7ca1
 
@@ -5819,7 +5784,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: zeek-live-env
-  namespace: malcolm
+  
   resourceVersion: "75133"
   uid: dbb0d558-fdfc-4176-91e1-f7d1f2bc9261
 
@@ -5835,7 +5800,7 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2023-10-16T20:04:18Z"
   name: zeek-offline-env
-  namespace: malcolm
+  
   resourceVersion: "75114"
   uid: a1205ed4-7202-4559-aec9-1178cb08c213
 
