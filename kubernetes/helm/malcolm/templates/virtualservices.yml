@@ -26,11 +26,33 @@ spec:
   hosts:
   - malcolm-arkime.{{ .Values.domain }}
   http:
-  - route:
+  - headers:
+      request:
+        set:
+          Authorization: ""
+          host: malcolm-arkime.{{ .Values.domain }}
+          http_auth_http_user: ubuntu
+    route:
     - destination:
         host: arkime.malcolm.svc.cluster.local
         port:
           number: 8005
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: arkime-wise
+spec:
+  gateways:
+  - {{ .Values.istio.gateway }}
+  hosts:
+  - malcolm-wise.{{ .Values.domain }}
+  http:
+  - route:
+    - destination:
+        host: arkime.malcolm.svc.cluster.local
+        port:
+          number: 8081
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService

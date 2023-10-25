@@ -2,13 +2,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: arkime
-  
+  name: arkime  
 spec:
   ports:
     - port: 8005
       protocol: TCP
       name: http
+    - port: 8081
+      protocol: TCP
+      name: wise
   selector:
     name: arkime-deployment
 
@@ -72,6 +74,9 @@ spec:
           successThreshold: 1
           failureThreshold: 10
         volumeMounts:
+          - mountPath: /opt/arkime/etc/config.orig.ini
+            name: arkime-config-default
+            subPath: config.ini        
           - mountPath: /var/local/ca-trust/configmap
             name: arkime-var-local-catrust-volume
           - mountPath: /var/local/curlrc/secretmap
@@ -99,6 +104,9 @@ spec:
           - name: arkime-runtime-logs-volume
             mountPath: "/data/runtime-logs"
       volumes:
+        - name: arkime-config-default
+          configMap:
+            name: arkime-config
         - name: arkime-var-local-catrust-volume
           configMap:
             name: var-local-catrust
