@@ -3,102 +3,16 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: kibana
+  name: malcolm
 spec:
   gateways:
   - {{ .Values.istio.gateway }}
   hosts:
-  - malcolm-kibana.{{ .Values.domain }}
+  - malcolm.{{ .Values.domain }}
   http:
   - route:
     - destination:
-        host: dashboards.malcolm.svc.cluster.local
+        host: nginx-proxy.malcolm.svc.cluster.local
         port:
-          number: 5601
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: arkime
-spec:
-  gateways:
-  - {{ .Values.istio.gateway }}
-  hosts:
-  - malcolm-arkime.{{ .Values.domain }}
-  http:
-  - headers:
-      request:
-        set:
-          Authorization: ""
-          host: malcolm-arkime.{{ .Values.domain }}
-          http_auth_http_user: ubuntu
-    route:
-    - destination:
-        host: arkime.malcolm.svc.cluster.local
-        port:
-          number: 8005
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: arkime-wise
-spec:
-  gateways:
-  - {{ .Values.istio.gateway }}
-  hosts:
-  - malcolm-wise.{{ .Values.domain }}
-  http:
-  - route:
-    - destination:
-        host: arkime.malcolm.svc.cluster.local
-        port:
-          number: 8081
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: upload
-spec:
-  gateways:
-  - {{ .Values.istio.gateway }}
-  hosts:
-  - malcolm-upload.{{ .Values.domain }}
-  http:
-  - route:
-    - destination:
-        host: upload.malcolm.svc.cluster.local
-        port:
-          number: 80
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: netbox
-spec:
-  gateways:
-  - {{ .Values.istio.gateway }}
-  hosts:
-  - malcolm-netbox.{{ .Values.domain }}
-  http:
-  - route:
-    - destination:
-        host: netbox.malcolm.svc.cluster.local
-        port:
-          number: 8080
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: htadmin
-spec:
-  gateways:
-  - {{ .Values.istio.gateway }}
-  hosts:
-  - malcolm-htadmin.{{ .Values.domain }}
-  http:
-  - route:
-    - destination:
-        host: htadmin.malcolm.svc.cluster.local
-        port:
-          number: 80
+          number: 443
 {{- end }}

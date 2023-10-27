@@ -4,32 +4,6 @@ apiVersion: v1
 data:
   htpasswd: |
     ubuntu:$2y$05$Z5AhvGzD5mxdfFIcVyV0GuFhZ4rIuHI73k/5Mye/XCQHyH4ScIkAu
-
-  config.ini: |
-    ; HTAdmin config file.
-
-    [application]
-    ; Change this to customize your title:
-    app_title = Malcolm User Management
-
-    ; htpasswd file
-    secure_path  = ./auth/htpasswd
-    ; metadata file
-    metadata_path  = ./config/metadata
-
-    ; administrator user/password (htpasswd -b -c -B ...)
-    admin_user = ubuntu
-
-    ; username field quality checks
-    ;
-    min_username_len = 4
-    max_username_len = 32
-
-    ; Password field quality checks
-    ;
-    min_password_len = 8
-    max_password_len = 128
-    
 kind: ConfigMap
 metadata:
   name: htaccess
@@ -268,7 +242,7 @@ data:
         # Dashboards -> Arkime shortcut
         location ~* /iddash2ark/(.*) {
           rewrite ^.*/iddash2ark/(.*) /sessions?expression=($1) redirect;
-          proxy_pass https://arkime;
+          proxy_pass http://arkime;
           proxy_ssl_verify off;
           proxy_redirect off;
           proxy_set_header Host arkime.malcolm.local;
@@ -328,7 +302,7 @@ data:
           add_header Content-Type "application/javascript";
           default_type application/javascript;
           add_header X-Content-Type-Options 'nosniff';
-          proxy_pass https://arkime/cyberchef/$1;
+          proxy_pass http://arkime/cyberchef/$1;
           proxy_ssl_verify off;
           proxy_redirect off;
           proxy_set_header Host arkime.malcolm.local;
@@ -347,7 +321,7 @@ data:
         # Arkime
         location / {
           include /etc/nginx/nginx_auth_rt.conf;
-          proxy_pass https://arkime;
+          proxy_pass http://arkime;
           proxy_ssl_verify off;
           proxy_redirect off;
           proxy_set_header Host arkime.malcolm.local;
@@ -456,63 +430,6 @@ metadata:
   
 
 ---
-# apiVersion: v1
-# data:
-#   root-cert.pem: |
-#     -----BEGIN CERTIFICATE-----
-#     MIIC/TCCAeWgAwIBAgIRAKvOgkO24UlmUJAzx09aOucwDQYJKoZIhvcNAQELBQAw
-#     GDEWMBQGA1UEChMNY2x1c3Rlci5sb2NhbDAeFw0yMzEwMTYxNzE5MjlaFw0zMzEw
-#     MTMxNzE5MjlaMBgxFjAUBgNVBAoTDWNsdXN0ZXIubG9jYWwwggEiMA0GCSqGSIb3
-#     DQEBAQUAA4IBDwAwggEKAoIBAQCnbBf6brg2s/ys4N8P+A2g2znaBrt4mCUUgRM1
-#     TbQC4OKMbL2QUrckigv6sXK8D/mnQTlzbU3V5H4Xg3Fm62ELwqFVMI85D3Zmbc9L
-#     CVHjBndxKBNW5eo67m/LrY/45+SGb15HPYYHkDin/6VYkA63UEPJpLrPri9g+Rj6
-#     zfY8OZdoBAwifAAKaDitWFKD4i0YJXtzUXhC/XVGMMahsO8M4Sr62vjOknGK7zQj
-#     u4I47oD4lILF+2DpjWuWYCwfk+e1KnxhH5VUmtSCJM7xI2OM/2Ft9dZymMSpR2Vz
-#     LAwjDfHkqk2WfC1GUHwbysewWU6Cc8mSB44W5RqU4hWRIEWlAgMBAAGjQjBAMA4G
-#     A1UdDwEB/wQEAwICBDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSJafa+1clX
-#     +tdEDz8XUwHGYtcHgzANBgkqhkiG9w0BAQsFAAOCAQEAcNtGgEoqNA/ZremOiEyq
-#     pMJ0Tc0L0jWksn5RwCBTkgPHjhA9lY7OI4PfZGcAVPpFr/3yov5upRHRC8S2Q8fu
-#     MAWOPvFWrPkd/EhUeWkJVXAKYW8jtuRMw7LfllKjgWiPrcDeZOk+HUZoT+34PJR9
-#     D67MtMvKYzNVpr3ZErSNiSwwl723rDpumXUvP8kV2+DLiEnX0SpMK58ZiQJFl4Pl
-#     lOkalxFX+dgPiSguwsEsKELbZEtuq5aZu2zjuM7KMBGgLeNs1Oq0woUvyOKXPsSr
-#     UcfddF9Zc71yqG8Zxdeqn5ngMjwYscaNuHefDanOTsetbQhAExTpYbQUC3RjUvMs
-#     zA==
-#     -----END CERTIFICATE-----
-# kind: ConfigMap
-# metadata:
-#   creationTimestamp: "2023-10-16T20:04:00Z"
-#   annotations:
-#     meta.helm.sh/release-name: malcolm
-#   labels:
-#     istio.io/config: "true"
-#     app.kubernetes.io/managed-by: "Helm"
-#   name: istio-ca-root-cert
-
-# ---
-# apiVersion: v1
-# data:
-#   ca.crt: |
-#     -----BEGIN CERTIFICATE-----
-#     MIIBeTCCAR+gAwIBAgIBADAKBggqhkjOPQQDAjAkMSIwIAYDVQQDDBlya2UyLXNl
-#     cnZlci1jYUAxNjk3NDcxODMxMB4XDTIzMTAxNjE1NTcxMVoXDTMzMTAxMzE1NTcx
-#     MVowJDEiMCAGA1UEAwwZcmtlMi1zZXJ2ZXItY2FAMTY5NzQ3MTgzMTBZMBMGByqG
-#     SM49AgEGCCqGSM49AwEHA0IABEgG4gh6Nl5e+PwDbg8rs9L2nwX3uBtCye6lA2DI
-#     Ptqb0FLMjbzImK+aQrlELCJYaR9TdcyV2s8o4Bpd2rdETD6jQjBAMA4GA1UdDwEB
-#     /wQEAwICpDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTnFPdbK4PhV+kDH1XD
-#     XdMWAZUPbjAKBggqhkjOPQQDAgNIADBFAiBJEgGmdK/uvNGjDSsyzaHxV98/TnO9
-#     h9sRv6PJzAJnjQIhAK0NnOfvlBOfPwDphDgl42haKRVg67WHQxFw+N41kd1J
-#     -----END CERTIFICATE-----
-# kind: ConfigMap
-# metadata:
-#   annotations:
-#     kubernetes.io/description: Contains a CA bundle that can be used to verify the
-#       kube-apiserver when using internal endpoints such as the internal service IP
-#       or kubernetes.default.svc. No other usage is guaranteed across distributions
-#       of Kubernetes clusters.
-#     meta.helm.sh/release-name: malcolm
-#   name: kube-root-ca.crt
-
-# ---
 apiVersion: v1
 data:
   LOGSTASH_NETBOX_AUTO_POPULATE: "true"
@@ -5599,44 +5516,32 @@ data:
   path.repo: /opt/opensearch/backup
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: opensearch-env
-  
-  resourceVersion: "75121"
-  uid: b2b860a6-f3dd-4869-a58a-fc4215d5bac9
 
 ---
 apiVersion: v1
 data:
   PCAP_ENABLE_NETSNIFF: "false"
   PCAP_ENABLE_TCPDUMP: "false"
-  PCAP_FILTER: ""
-  PCAP_IFACE: ens192
+  PCAP_FILTER: "{{ .Values.pcap_capture_env.pcap_filter }}"
+  PCAP_IFACE: "{{ .Values.pcap_capture_env.pcap_iface }}"
   PCAP_IFACE_TWEAK: "false"
   PCAP_ROTATE_MEGABYTES: "4096"
   PCAP_ROTATE_MINUTES: "10"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: pcap-capture-env
-  
-  resourceVersion: "75117"
-  uid: 5fd35c2e-b9ac-4096-ab97-0b1627ab2cd1
 
 ---
 apiVersion: v1
 data:
   CONFIG_MAP_DIR: configmap;secretmap
-  PGID: "1000"
-  PUID: "1000"
+  PGID: "{{ .Values.process_env.pgid }}"
+  PUID: "{{ .Values.process_env.puid }}"
   TINI_VERBOSITY: "1"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: process-env
-  
-  resourceVersion: "75123"
-  uid: e2395a30-4761-48b8-85b6-9dc726c2a803
 
 ---
 apiVersion: v1
@@ -5644,11 +5549,7 @@ data:
   PUSER_CA_TRUST: /var/local/ca-trust
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: ssl-env
-  
-  resourceVersion: "75125"
-  uid: a5ddab0c-c91f-441f-b42b-a5bb0cd128c8
 
 ---
 apiVersion: v1
@@ -5659,11 +5560,7 @@ data:
   SURICATA_UPDATE_RULES: "false"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: suricata-env
-  
-  resourceVersion: "75130"
-  uid: 97b99096-37c3-4797-a856-c0d35a2e2e2d
 
 ---
 apiVersion: v1
@@ -5802,11 +5699,7 @@ data:
   ZEEK_SYNCHROPHASOR_PORTS: ""
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: zeek-env
-  
-  resourceVersion: "75115"
-  uid: 0e276773-0dbd-49b3-bc59-2c605ffd7ca1
 
 ---
 apiVersion: v1
@@ -5819,11 +5712,7 @@ data:
   ZEEK_PCAP_PROCESSOR: "false"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: zeek-live-env
-  
-  resourceVersion: "75133"
-  uid: dbb0d558-fdfc-4176-91e1-f7d1f2bc9261
 
 ---
 apiVersion: v1
@@ -5835,9 +5724,4 @@ data:
   ZEEK_ROTATED_PCAP: "true"
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-10-16T20:04:18Z"
   name: zeek-offline-env
-  
-  resourceVersion: "75114"
-  uid: a1205ed4-7202-4559-aec9-1178cb08c213
-

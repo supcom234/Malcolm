@@ -51,22 +51,22 @@ spec:
         volumeMounts:
           - mountPath: /var/local/ca-trust/configmap
             name: htadmin-var-local-catrust-volume
-          # - mountPath: /var/www/htadmin/auth
-          #   name: htadmin-config-volume
-          #   subPath: "auth"
+          - mountPath: /var/www/htadmin/auth
+            name: htadmin-config-volume
+            subPath: "auth"
           - mountPath: /var/www/htadmin/default/configmap
             name: htadmin-config-default-volume
           - mountPath: /var/www/htadmin/default/secretmap
             name: htadmin-config-default-secret-volume
-          # - mountPath: /var/www/htadmin/config
-          #   name: htadmin-config-volume
-          #   subPath: "htadmin"
-          - mountPath: /var/www/htadmin/auth/htpasswd
-            name: htadmin-config-volume2
-            subPath: htpasswd
-          - mountPath: /var/www/htadmin/config/config.ini
-            name: htadmin-config-volume2
-            subPath: config.ini
+          - mountPath: /var/www/htadmin/config
+            name: htadmin-config-volume
+            subPath: "htadmin"
+          # - mountPath: /var/www/htadmin/auth/htpasswd
+          #   name: htadmin-config-volume2
+          #   subPath: htpasswd
+          # - mountPath: /var/www/htadmin/config/config.ini
+          #   name: htadmin-config-volume2
+          #   subPath: config.ini
       initContainers:
       - name: htadmin-dirinit-container
         image: "{{ .Values.image.repository }}/dirinit:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -79,19 +79,19 @@ spec:
         env:
           - name: PUSER_MKDIR
             value: "/data/config:auth,htadmin"
-        # volumeMounts:
-        #   - name: htadmin-config-volume
-        #     mountPath: "/data/config"
+        volumeMounts:
+          - name: htadmin-config-volume
+            mountPath: "/data/config"
       volumes:
         - name: htadmin-var-local-catrust-volume
           configMap:
             name: var-local-catrust
-        # - name: htadmin-config-volume
-        #   persistentVolumeClaim:
-        #     claimName: config-claim
-        - name: htadmin-config-volume2
-          configMap:
-            name: htaccess
+        - name: htadmin-config-volume
+          persistentVolumeClaim:
+            claimName: config-claim
+        # - name: htadmin-config-volume2
+        #   configMap:
+        #     name: htaccess
         - name: htadmin-config-default-volume
           configMap:
             name: htadmin-config

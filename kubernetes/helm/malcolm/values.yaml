@@ -22,3 +22,13 @@ ingress:
 istio:
   enabled: true
   gateway: istio-system/tenant
+
+# Sets environment variables across multiple applications within Malcolm {{ .Values.pcap_capture_env.pcap_iface }}
+pcap_capture_env:
+  pcap_iface: ens192
+  pcap_filter: ""
+
+# Sets GID and UID for each container
+process_env:
+  pgid: 1000
+  puid: 1000

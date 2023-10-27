@@ -1,4 +1,3 @@
-{{- if .Values.ingress.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -137,4 +136,3 @@ spec:
       - name: nginx-runtime-logs-volume
         persistentVolumeClaim:
           claimName: runtime-logs-claim
-{{- end }}
