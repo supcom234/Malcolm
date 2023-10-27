@@ -14,6 +14,7 @@ spec:
       labels:
         name: suricata-live-deployment
     spec:
+      hostNetwork: true
       containers:
       - name: suricata-live-container
         image: "{{ .Values.image.repository }}/suricata:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -43,7 +44,7 @@ spec:
               name: pcap-capture-env
         env:
           - name: SURICATA_DISABLED
-            value: "true"
+            value: "false"
         volumeMounts:
           - mountPath: /var/local/ca-trust/configmap
             name: suricata-live-var-local-catrust-volume

@@ -5611,7 +5611,7 @@ data:
   PCAP_ENABLE_NETSNIFF: "false"
   PCAP_ENABLE_TCPDUMP: "false"
   PCAP_FILTER: ""
-  PCAP_IFACE: lo
+  PCAP_IFACE: ens192
   PCAP_IFACE_TWEAK: "false"
   PCAP_ROTATE_MEGABYTES: "4096"
   PCAP_ROTATE_MINUTES: "10"
@@ -5668,7 +5668,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  SURICATA_LIVE_CAPTURE: "false"
+  SURICATA_LIVE_CAPTURE: "true"
   SURICATA_PCAP_PROCESSOR: "false"
   SURICATA_RUNMODE: workers
 kind: ConfigMap
@@ -5814,7 +5814,7 @@ data:
   EXTRACT_FILES_PATH: /zeek/extract_files
   ZEEK_CRON: "true"
   ZEEK_INTEL_PATH: /opt/zeek/share/zeek/site/intel
-  ZEEK_LIVE_CAPTURE: "false"
+  ZEEK_LIVE_CAPTURE: "true"
   ZEEK_LOG_PATH: /zeek/live
   ZEEK_PCAP_PROCESSOR: "false"
 kind: ConfigMap

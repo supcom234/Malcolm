@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: zeek-live-deployment
-  
 spec:
   selector:
     matchLabels:
@@ -14,6 +13,7 @@ spec:
       labels:
         name: zeek-live-deployment
     spec:
+      hostNetwork: true
       containers:
       - name: zeek-live-container
         image: "{{ .Values.image.repository }}/zeek:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -45,7 +45,7 @@ spec:
               name: pcap-capture-env
         env:
           - name: ZEEK_DISABLED
-            value: "true"
+            value: "false"
         volumeMounts:
           - mountPath: /var/local/ca-trust/configmap
             name: zeek-live-var-local-catrust-volume
@@ -55,6 +55,9 @@ spec:
           - mountPath: "/zeek/upload"
             name: zeek-live-zeek-volume
             subPath: "upload"
+          - mountPath: "/zeek/live"
+            name: zeek-live-zeek-volume
+            subPath: "live"
           - mountPath: "/opt/zeek/share/zeek/site/intel"
             name: zeek-live-zeek-intel
             subPath: "zeek/intel"
