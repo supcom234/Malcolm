@@ -1,9 +1,9 @@
+{{- if .Values.opensearch.enabled }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: opensearch
-  
 spec:
   ports:
     - port: 9200
@@ -17,7 +17,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: opensearch-deployment
-  
 spec:
   selector:
     matchLabels:
@@ -103,3 +102,4 @@ spec:
         - name: opensearch-config-persist-volume
           persistentVolumeClaim:
             claimName: config-claim
+{{- end }}

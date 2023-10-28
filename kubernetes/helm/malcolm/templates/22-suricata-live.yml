@@ -1,20 +1,33 @@
+{{- if .Values.suricata_live.enabled }}
+---
+apiVersion: v1
+data:
+  SURICATA_LIVE_CAPTURE: "true"
+  SURICATA_PCAP_PROCESSOR: "false"
+  SURICATA_RUNMODE: workers
+kind: ConfigMap
+metadata:
+  name: suricata-live-env
+
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: suricata-live-deployment
-  
 spec:
   selector:
     matchLabels:
       name: suricata-live-deployment
-  replicas: 1
   template:
     metadata:
       labels:
         name: suricata-live-deployment
-    spec:
+    spec:      
       hostNetwork: true
+      nodeSelector:
+{{ toYaml .Values.suricata_live.nodeSelector | indent 8 }}
+      tolerations:
+{{ toYaml .Values.live_capture.tolerations | indent 6 }}
       containers:
       - name: suricata-live-container
         image: "{{ .Values.image.repository }}/suricata:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -72,3 +85,4 @@ spec:
         - name: suricata-live-suricata-logs-volume
           persistentVolumeClaim:
             claimName: suricata-claim
+{{- end }}

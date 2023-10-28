@@ -1,19 +1,23 @@
+{{- if .Values.pcap_live.enabled }}
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: pcap-capture-deployment
-  
 spec:
   selector:
     matchLabels:
       name: pcap-capture-deployment
-  replicas: 1
   template:
     metadata:
       labels:
         name: pcap-capture-deployment
     spec:
+      hostNetwork: true
+      nodeSelector:
+{{ toYaml .Values.pcap_live.nodeSelector | indent 8 }}
+      tolerations:
+{{ toYaml .Values.live_capture.tolerations | indent 6 }}
       containers:
       - name: pcap-capture-container
         image: "{{ .Values.image.repository }}/pcap-capture:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -37,7 +41,7 @@ spec:
               name: pcap-capture-env
         env:
           - name: PCAP_CAPTURE_DISABLED
-            value: "true"
+            value: "false"
         volumeMounts:
           - mountPath: /var/local/ca-trust/configmap
             name: capture-var-local-catrust-volume
@@ -66,3 +70,4 @@ spec:
         - name: capture-pcap-volume
           persistentVolumeClaim:
             claimName: pcap-claim
+{{- end }}

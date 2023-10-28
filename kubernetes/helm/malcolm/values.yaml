@@ -3,30 +3,100 @@ domain: vp.bigbang.dev
 image:
   repository: ghcr.io/idaholab/malcolm
   pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
+  # Overrides the image tag whose default is the chart appVersion found in Chart.yml.
   tag: ""
 
-applications:
-  opensearch:
-    enabled: true
-    image: opensearch
-    tag: ""
+opensearch:    
+  enabled: true
+  java_memory: -Xms16g -Xmx16g -Xss256k -XX
+
+# TODO not implemented
+external_elasticsearch:
+  enabled: false
+  url: http://elasticsearch:9200
 
 storage:
-  className: local-path
+  # This helm chart requires a storage provisioner class it defaults to local-path provisioner
+  # If your kuberenetes cluster has a different storage provisioner please ensure you change this name.
+  # https://github.com/rancher/local-path-provisioner  
+  pcap_claim: 
+    size: 100Gi
+    className: local-path
+  zeek_claim: 
+    size: 50Gi
+    className: local-path
+  suricata_claim:
+    size: 50Gi
+    className: local-path
+  config_claim: 
+    size: 25Gi
+    className: local-path
+  runtime_logs_claim: 
+    size: 25Gi
+    className: local-path
+  opensearch_claim: 
+    size: 100Gi
+    className: local-path
+  opensearch_backup_claim: 
+    size: 100Gi
+    className: local-path
 
 ingress:
   # Enable this if deploying in RKE2 environment with the default nginx ingress controller
   enabled: false
 
 istio:
+  # Enable this if deploying in Kuberenetes environment leveraging istio service mesh
+  # Additionally, it is recommended to turn off tls everywhere when this is set to true and let tls handle all things tls :).
   enabled: true
   gateway: istio-system/tenant
 
-# Sets environment variables across multiple applications within Malcolm {{ .Values.pcap_capture_env.pcap_iface }}
+# Suricata live is enabled by default and will listen pcap_iface
+# Defined under pcap_capture_env
+# If you disable it, you will still be able to upload pcaps using the malcolm offline upload of pcaps functionality.
+suricata_live:
+  enabled: true
+
+  # Suricata live is a Daemonset but it will only schedule on kubernetes nodes that has following label
+  nodeSelector:
+    cnaps.io/suricata-capture: "true"
+
+# Zeek live is enabled by default and will listen pcap_iface
+# Defined under pcap_capture_env
+# If you disable it, you will still be able to upload pcaps using the malcolm offline upload of pcaps functionality.
+zeek_live:
+  enabled: true
+
+  # Zeek live is a Daemonset but it will only schedule on kubernetes nodes that has following label
+  nodeSelector:
+    cnaps.io/zeek-capture: "true"
+
+pcap_live:
+  enabled: true
+
+  # Pcap live is a Daemonset but it will only schedule on kubernetes nodes that has following label
+  nodeSelector:
+    cnaps.io/arkime-capture: "true"
+
+# Sets environment variables across multiple applications within Malcolm (IE: pcap capture, zeek and suricata)
 pcap_capture_env:
   pcap_iface: ens192
   pcap_filter: ""
+
+
+# Shared settings across all live capture type things (IE: Zeek live, Suricata live, and Pcap capture)
+live_capture:
+  tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/master
+    operator: Exists
+    effect: NoSchedule
+  - key: "cnaps.io/node-taint"
+    operator: "Equal"
+    value: "noncore"
+    effect: "NoSchedule"
 
 # Sets GID and UID for each container
 process_env:

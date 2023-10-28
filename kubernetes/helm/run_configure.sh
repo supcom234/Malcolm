@@ -1,0 +1,30 @@
+#!/bin/bash
+./scripts/install.py -f /home/ubuntu/.kube/config \
+--configure=true \
+--defaults=true \
+--dark-mode=true \
+--opensearch=opensearch-local \
+--opensearch-ssl-verify=false \
+--opensearch-memory=16g \
+--logstash-memory=6g \
+--logstash-workers=6 \
+--delete-old-pcap=true \
+--delete-index-threshold="80%" \
+--auto-suricata=true \
+--suricata-rule-update=false \
+--auto-zeek=true \
+--zeek-ics=true \
+--zeek-ics-best-guess=true \
+--reverse-dns=false \
+--auto-oui=true \
+--auto-freq=true \
+--file-extraction=none \
+--netbox=true \
+--netbox-enrich=true \
+--netbox-autopopulate=true \
+--netbox-site-name=infrastructure \
+--https=false \
+--live-capture-iface=ens192 \
+--live-capture-arkime=true \
+--live-capture-zeek=true \
+--live-capture-suricata=true
