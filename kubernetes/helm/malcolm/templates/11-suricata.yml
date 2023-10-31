@@ -39,6 +39,11 @@ spec:
               name: suricata-env
           - configMapRef:
               name: suricata-offline-env
+        env:
+          - name: PCAP_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
         livenessProbe:
           exec:
             command:

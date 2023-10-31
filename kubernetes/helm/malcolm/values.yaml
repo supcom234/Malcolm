@@ -6,14 +6,22 @@ image:
   # Overrides the image tag whose default is the chart appVersion found in Chart.yml.
   tag: ""
 
-opensearch:    
+opensearch:
   enabled: true
   java_memory: -Xms16g -Xmx16g -Xss256k -XX
+  url: http://opensearch:9200
+  dashboards_url: http://dashboards:5601/dashboards
 
-# TODO not implemented
 external_elasticsearch:
   enabled: false
-  url: http://elasticsearch:9200
+  url: http://10.43.28.18:9200
+  username: "elastic"
+  password: "04LZ735EgIxIRNO94m895zet"
+  dashboards_url: "http://10.43.89.102:5601"
+
+logstash:
+  java_memory: -Xms3g -Xmx3g -Xss1536k -XX
+  workers: 6
 
 storage:
   # This helm chart requires a storage provisioner class it defaults to local-path provisioner
@@ -79,6 +87,7 @@ pcap_live:
     cnaps.io/arkime-capture: "true"
 
 # Sets environment variables across multiple applications within Malcolm (IE: pcap capture, zeek and suricata)
+# pcap_iface can be comma separate values.
 pcap_capture_env:
   pcap_iface: ens192
   pcap_filter: ""

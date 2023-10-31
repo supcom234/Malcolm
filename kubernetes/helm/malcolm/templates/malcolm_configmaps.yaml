@@ -432,16 +432,16 @@ metadata:
 ---
 apiVersion: v1
 data:
-  LOGSTASH_NETBOX_AUTO_POPULATE: "true"
+  LOGSTASH_NETBOX_AUTO_POPULATE: "false"
   LOGSTASH_NETBOX_ENRICHMENT: "true"
   LOGSTASH_OUI_LOOKUP: "true"
   LOGSTASH_REVERSE_DNS: "false"
   LOGSTASH_SEVERITY_SCORING: "true"
-  LS_JAVA_OPTS: -server -Xms3g -Xmx3g -Xss1536k -XX:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom
+  LS_JAVA_OPTS: -server {{ .Values.logstash.java_memory }}:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom
     -Dlog4j.formatMsgNoLookups=true
   pipeline.batch.delay: "50"
   pipeline.batch.size: "75"
-  pipeline.workers: "6"
+  pipeline.workers: "{{ .Values.logstash.workers }}"
 kind: ConfigMap
 metadata:
   name: logstash-env
@@ -4407,13 +4407,13 @@ data:
   OPENSEARCH_CREDS_CONFIG_FILE: /var/local/curlrc/.opensearch.primary.curlrc
   OPENSEARCH_JAVA_OPTS: -server {{ .Values.opensearch.java_memory }}:-HeapDumpOnOutOfMemoryError
     -Djava.security.egd=file:/dev/./urandom -Dlog4j.formatMsgNoLookups=true
-  OPENSEARCH_LOCAL: "true"
+  OPENSEARCH_PRIMARY: {{ include "malcolm.opensearchprimary" . }}
   OPENSEARCH_SECONDARY: "false"
   OPENSEARCH_SECONDARY_CREDS_CONFIG_FILE: /var/local/curlrc/.opensearch.secondary.curlrc
   OPENSEARCH_SECONDARY_SSL_CERTIFICATE_VERIFICATION: "false"
   OPENSEARCH_SECONDARY_URL: ""
   OPENSEARCH_SSL_CERTIFICATE_VERIFICATION: "false"
-  OPENSEARCH_URL: http://opensearch:9200
+  OPENSEARCH_URL: {{ include "malcolm.opensearchprimaryurl" . }}
   bootstrap.memory_lock: "true"
   cluster.routing.allocation.disk.threshold_enabled: "false"
   cluster.routing.allocation.node_initial_primaries_recoveries: "8"
@@ -4431,7 +4431,7 @@ data:
   PCAP_ENABLE_NETSNIFF: "false"
   PCAP_ENABLE_TCPDUMP: "false"
   PCAP_FILTER: "{{ .Values.pcap_capture_env.pcap_filter }}"
-  PCAP_IFACE: "{{ .Values.pcap_capture_env.pcap_iface }}"
+  PCAP_IFACE: {{ .Values.pcap_capture_env.pcap_iface }}
   PCAP_IFACE_TWEAK: "false"
   PCAP_ROTATE_MEGABYTES: "4096"
   PCAP_ROTATE_MINUTES: "10"
@@ -4492,7 +4492,6 @@ data:
   AUTO_TAG: "true"
   LOG_CLEANUP_MINUTES: "360"
   PCAP_MONITOR_HOST: pcap-monitor
-  PCAP_NODE_NAME: malcolmkubernetes2
   PCAP_PIPELINE_IGNORE_PREEXISTING: "false"
   PCAP_PIPELINE_POLLING: "true"
   PCAP_PIPELINE_POLLING_ASSUME_CLOSED_SEC: "10"

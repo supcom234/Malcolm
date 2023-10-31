@@ -63,6 +63,10 @@ spec:
         env:
           - name: ZEEK_DISABLED
             value: "false"
+          - name: PCAP_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
         volumeMounts:
           - mountPath: /var/local/ca-trust/configmap
             name: zeek-live-var-local-catrust-volume

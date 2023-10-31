@@ -56,6 +56,11 @@ spec:
               name: beats-common-env
           - configMapRef:
               name: filebeat-env
+        env:
+          - name: PCAP_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
         livenessProbe:
           exec:
             command:

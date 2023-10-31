@@ -40,6 +40,11 @@ spec:
               name: zeek-secret-env
           - configMapRef:
               name: zeek-offline-env
+        env:
+          - name: PCAP_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
         livenessProbe:
           exec:
             command:

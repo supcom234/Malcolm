@@ -1,4 +1,68 @@
 {{/*
+Get whether or not opensearch is local or remote.
+*/}}
+{{- define "malcolm.opensearchprimary" -}}
+{{- if .Values.opensearch.enabled }}
+{{- printf "%s" "opensearch-local" }}
+{{- else if .Values.external_elasticsearch.enabled }}
+{{- printf "%s" "elasticsearch-remote" }}
+{{- else }}
+{{- printf "%s" "opensearch-local" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Get Opensearch or Elasticsearch url.
+*/}}
+{{- define "malcolm.opensearchprimaryurl" -}}
+{{- if .Values.opensearch.enabled }}
+    {{- printf "%s" .Values.opensearch.url }}
+{{- else if .Values.external_elasticsearch.enabled }}
+    {{- $url := .Values.external_elasticsearch.url }}
+    {{- if .Values.external_elasticsearch.username }}
+        {{- $parts := split "://" .Values.external_elasticsearch.url }}
+        {{- $url := printf "%s://%s" $parts._0 .Values.external_elasticsearch.username }}
+        {{- if .Values.external_elasticsearch.password }}
+            {{- $url = printf "%s:%s" $url .Values.external_elasticsearch.password }}
+        {{- end }}
+        {{- $url = printf "%s@%s" $url $parts._1 }}
+        {{- printf "%s" $url }}
+    {{- else }}
+        {{- printf "%s" $url }}
+    {{- end }}
+{{- else }}
+    {{- printf "%s" .Values.opensearch.url }}
+{{- end }}
+{{- end }}
+
+
+{{/*
+Get Opensearch or Elasticsearch dashboards url. TODO figure out a way to refactor this so 
+I am not duplicating this template code.
+*/}}
+{{- define "malcolm.dashboardsurl" -}}
+{{- if .Values.opensearch.enabled }}
+    {{- printf "%s" .Values.opensearch.dashboards_url }}
+{{- else if .Values.external_elasticsearch.enabled }}
+    {{- $url := .Values.external_elasticsearch.dashboards_url }}
+    {{- if .Values.external_elasticsearch.username }}
+        {{- $parts := split "://" .Values.external_elasticsearch.dashboards_url }}
+        {{- $url := printf "%s://%s" $parts._0 .Values.external_elasticsearch.username }}
+        {{- if .Values.external_elasticsearch.password }}
+            {{- $url = printf "%s:%s" $url .Values.external_elasticsearch.password }}
+        {{- end }}
+        {{- $url = printf "%s@%s" $url $parts._1 }}
+        {{- printf "%s" $url }}
+    {{- else }}
+        {{- printf "%s" $url }}
+    {{- end }}
+{{- else }}
+    {{- printf "%s" .Values.opensearch.dashboards_url }}
+{{- end }}
+{{- end }}
+
+
+{{/*
 Expand the name of the chart.
 */}}
 {{- define "malcolm.name" -}}

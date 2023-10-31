@@ -62,7 +62,11 @@ spec:
               name: arkime-secret-env
         env:
           - name: VIRTUAL_HOST
-            value: "arkime.malcolm.local"
+            value: "arkime.malcolm.local"                
+          - name: PCAP_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
         livenessProbe:
           httpGet:
             path: /_ns_/nstest.html
