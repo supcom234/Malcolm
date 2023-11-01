@@ -4428,8 +4428,8 @@ metadata:
 ---
 apiVersion: v1
 data:
-  PCAP_ENABLE_NETSNIFF: "false"
-  PCAP_ENABLE_TCPDUMP: "false"
+  PCAP_ENABLE_NETSNIFF: "{{ .Values.pcap_capture_env.net_sniff }}"
+  PCAP_ENABLE_TCPDUMP: "{{ .Values.pcap_capture_env.tcpdump }}"
   PCAP_FILTER: "{{ .Values.pcap_capture_env.pcap_filter }}"
   PCAP_IFACE: {{ .Values.pcap_capture_env.pcap_iface }}
   PCAP_IFACE_TWEAK: "false"

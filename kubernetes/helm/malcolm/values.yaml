@@ -14,10 +14,10 @@ opensearch:
 
 external_elasticsearch:
   enabled: false
-  url: http://10.43.28.18:9200
+  url: http://10.43.166.193:9200
   username: "elastic"
-  password: "04LZ735EgIxIRNO94m895zet"
-  dashboards_url: "http://10.43.89.102:5601"
+  password: "YELr5BgdvC1Vm5317r3th843"
+  dashboards_url: "http://10.43.157.197:5601"
 
 logstash:
   java_memory: -Xms3g -Xmx3g -Xss1536k -XX
@@ -80,7 +80,7 @@ zeek_live:
     cnaps.io/zeek-capture: "true"
 
 pcap_live:
-  enabled: true
+  enabled: true  
 
   # Pcap live is a Daemonset but it will only schedule on kubernetes nodes that has following label
   nodeSelector:
@@ -91,6 +91,8 @@ pcap_live:
 pcap_capture_env:
   pcap_iface: ens192
   pcap_filter: ""
+  net_sniff: false
+  tcpdump: true
 
 
 # Shared settings across all live capture type things (IE: Zeek live, Suricata live, and Pcap capture)
