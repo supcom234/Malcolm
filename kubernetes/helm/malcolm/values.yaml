@@ -7,13 +7,13 @@ image:
   tag: ""
 
 opensearch:
-  enabled: true
+  enabled: false
   java_memory: -Xms16g -Xmx16g -Xss256k -XX
   url: http://opensearch:9200
   dashboards_url: http://dashboards:5601/dashboards
 
 external_elasticsearch:
-  enabled: false
+  enabled: true
   url: http://dataplane-ek-es-http.dataplane-ek.svc.cluster.local:9200
   username: "elastic"
   password: "YELr5BgdvC1Vm5317r3th843"
