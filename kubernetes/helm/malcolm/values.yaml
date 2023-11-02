@@ -14,10 +14,10 @@ opensearch:
 
 external_elasticsearch:
   enabled: false
-  url: http://10.43.166.193:9200
+  url: http://dataplane-ek-es-http.dataplane-ek.svc.cluster.local:9200
   username: "elastic"
   password: "YELr5BgdvC1Vm5317r3th843"
-  dashboards_url: "http://10.43.157.197:5601"
+  dashboards_url: "http://dataplane-ek-kb-http.dataplane-ek.svc.cluster.local:5601"
 
 logstash:
   java_memory: -Xms3g -Xmx3g -Xss1536k -XX
@@ -51,6 +51,7 @@ storage:
 
 ingress:
   # Enable this if deploying in RKE2 environment with the default nginx ingress controller
+  # TODO this still needs to be tested with tls enabled with auto cert generation
   enabled: false
 
 istio:
@@ -91,6 +92,7 @@ pcap_live:
 pcap_capture_env:
   pcap_iface: ens192
   pcap_filter: ""
+  # NOTE Net Sniff and tcpdump cannot be both true. Only one or the other can be running at a time.
   net_sniff: false
   tcpdump: true
 

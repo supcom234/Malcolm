@@ -5,7 +5,7 @@ metadata:
 data:
   config.ini: |
     [default]
-    elasticsearch=http://opensearch:9200
+    elasticsearch={{ include "malcolm.opensearchprimaryurl" . }}
     cronQueries=true
     rotateIndex=daily
     passwordSecret=Malcolm
