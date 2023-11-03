@@ -10,6 +10,16 @@ metadata:
 
 ---
 apiVersion: v1
+data:
+  MAXMIND_GEOIP_DB_LICENSE_KEY: MA==
+kind: Secret
+metadata:
+  name: arkime-secret-env
+type: Opaque
+
+
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: arkime  
@@ -29,7 +39,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: arkime-deployment
-  
 spec:
   selector:
     matchLabels:

@@ -16,6 +16,16 @@ metadata:
 
 ---
 apiVersion: v1
+data:
+  htpasswd: {{ .Values.auth.htpass_cred | b64enc }}
+kind: Secret
+metadata:  
+  name: etc-nginx-auth
+type: Opaque
+
+
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: nginx-proxy

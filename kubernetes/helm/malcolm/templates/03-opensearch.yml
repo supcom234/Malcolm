@@ -13,6 +13,13 @@ spec:
     name: opensearch-deployment
 
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: opensearch-keystore
+type: Opaque
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
