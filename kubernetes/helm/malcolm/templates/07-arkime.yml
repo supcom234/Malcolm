@@ -1,5 +1,15 @@
 ---
 apiVersion: v1
+data:
+  ARKIME_ANALYZE_PCAP_THREADS: "1"
+  MANAGE_PCAP_FILES: "false"
+  OPENSEARCH_MAX_SHARDS_PER_NODE: "2500"
+kind: ConfigMap
+metadata:
+  name: arkime-env
+
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: arkime  

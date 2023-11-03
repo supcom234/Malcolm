@@ -1,3 +1,4 @@
+{{- if .Values.netbox.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -94,3 +95,4 @@ spec:
         - name: netbox-postgres-volume
           persistentVolumeClaim:
             claimName: config-claim
+{{- end }}

@@ -1,24 +1,3 @@
-#CUSTOM configmaps
----
-apiVersion: v1
-data:
-  htpasswd: |
-    ubuntu:$2y$05$Z5AhvGzD5mxdfFIcVyV0GuFhZ4rIuHI73k/5Mye/XCQHyH4ScIkAu
-kind: ConfigMap
-metadata:
-  name: htaccess
-
-#END CUSTOM configmaps
----
-apiVersion: v1
-data:
-  ARKIME_ANALYZE_PCAP_THREADS: "1"
-  MANAGE_PCAP_FILES: "false"
-  OPENSEARCH_MAX_SHARDS_PER_NODE: "2500"
-kind: ConfigMap
-metadata:
-  name: arkime-env
-
 ---
 apiVersion: v1
 data:
@@ -34,113 +13,10 @@ metadata:
 ---
 apiVersion: v1
 data:
-  BEATS_SSL: "true"
+  BEATS_SSL: "false"
 kind: ConfigMap
 metadata:
   name: beats-common-env
-
----
-apiVersion: v1
-data:
-  DASHBOARDS_DARKMODE: "true"
-  ISM_SNAPSHOT_COMPRESSED: "false"
-  ISM_SNAPSHOT_REPO: logs
-  OPENSEARCH_INDEX_SIZE_PRUNE_LIMIT: 80%
-  OPENSEARCH_INDEX_SIZE_PRUNE_NAME_SORT: "false"
-kind: ConfigMap
-metadata:
-  name: dashboards-helper-env
-
----
-apiVersion: v1
-data:
-  dhparam.pem: |
-    -----BEGIN DH PARAMETERS-----
-    MIIBCAKCAQEA7yG//9Ksp/vkheJ4yo1WConrUWtcN0qrn3/SbgDmzRr09ycdb1h4
-    yS0h9GZLk4MvzNC9Fk7AYwi1bNierxdrp31qgS+mwrtTM0p0gHrd4ullkOekUEBO
-    aECziTbjfh0aMzirjb8j6NAvqCy6qCdPYpm+HpwNumK0c4JYGT4Ek0coCw4A30yw
-    ch3CX5IQMd+O8FW+0SNurnZ+0TQmlO7xJr+ARbYngzQHBgMIQgSOLiSgCi/dgUh4
-    +6vUETo4Q0ytGoRZQlWXOfRtrEOFRlYCcz5ZI9TXovGcQs0736QXJnY4Gr0YlvGi
-    Vyoi3N+QwxlHRX9nGWlEVefrGVEN7WKBLwIBAg==
-    -----END DH PARAMETERS-----
-kind: ConfigMap
-metadata:  
-  name: etc-nginx-certs-pem
-
----
-apiVersion: v1
-data:
-  FILEBEAT_CLEAN_INACTIVE: 180m
-  FILEBEAT_CLEAN_REMOVED: "true"
-  FILEBEAT_CLOSE_EOF: "true"
-  FILEBEAT_CLOSE_INACTIVE: 120s
-  FILEBEAT_CLOSE_INACTIVE_LIVE: 90m
-  FILEBEAT_CLOSE_REMOVED: "true"
-  FILEBEAT_CLOSE_RENAMED: "true"
-  FILEBEAT_IGNORE_OLDER: 120m
-  FILEBEAT_SCAN_FREQUENCY: 10s
-  FILEBEAT_TCP_LISTEN: "true"
-  FILEBEAT_TCP_LOG_FORMAT: json
-  FILEBEAT_TCP_PARSE_DROP_FIELD: message
-  FILEBEAT_TCP_PARSE_SOURCE_FIELD: message
-  FILEBEAT_TCP_PARSE_TARGET_FIELD: miscbeat
-  FILEBEAT_TCP_TAG: _malcolm_beats
-  FILEBEAT_WATCHER_POLLING: "true"
-  FILEBEAT_WATCHER_POLLING_ASSUME_CLOSED_SEC: "10"
-kind: ConfigMap
-metadata:
-  name: filebeat-env
-
-
----
-apiVersion: v1
-data:
-  config.ini: |+
-    ; HTAdmin config file.
-
-    [application]
-    ; Change this to customize your title:
-    app_title = Malcolm User Management
-
-    ; htpasswd file
-    secure_path  = ./auth/htpasswd
-    ; metadata file
-    metadata_path  = ./config/metadata
-
-    ; administrator user/password (htpasswd -b -c -B ...)
-    admin_user = ubuntu
-
-    ; username field quality checks
-    ;
-    min_username_len = 4
-    max_username_len = 32
-
-    ; Password field quality checks
-    ;
-    min_password_len = 8
-    max_password_len = 128
-
-kind: ConfigMap
-metadata:
-  name: htadmin-config
-  
-
----
-apiVersion: v1
-data:
-  LOGSTASH_NETBOX_AUTO_POPULATE: "false"
-  LOGSTASH_NETBOX_ENRICHMENT: "true"
-  LOGSTASH_OUI_LOOKUP: "true"
-  LOGSTASH_REVERSE_DNS: "false"
-  LOGSTASH_SEVERITY_SCORING: "true"
-  LS_JAVA_OPTS: -server {{ .Values.logstash.java_memory }}:-HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom
-    -Dlog4j.formatMsgNoLookups=true
-  pipeline.batch.delay: "50"
-  pipeline.batch.size: "75"
-  pipeline.workers: "{{ .Values.logstash.workers }}"
-kind: ConfigMap
-metadata:
-  name: logstash-env
   
 ---
 apiVersion: v1
@@ -157,11 +33,11 @@ metadata:
 ---
 apiVersion: v1
 data:
-  NETBOX_CRON: "true"
+  NETBOX_CRON: "{{ .Values.netbox.enabled }}"
   NETBOX_DEFAULT_SITE: infrastructure
-  NETBOX_DISABLED: "false"
-  NETBOX_POSTGRES_DISABLED: "false"
-  NETBOX_REDIS_DISABLED: "false"
+  NETBOX_DISABLED: "{{ not .Values.netbox.enabled }}"
+  NETBOX_POSTGRES_DISABLED: "{{ not .Values.netbox.enabled }}"
+  NETBOX_REDIS_DISABLED: "{{ not .Values.netbox.enabled }}"
 kind: ConfigMap
 metadata:
   name: netbox-common-env
@@ -172,7 +48,7 @@ data:
   BASE_PATH: netbox
   CENSUS_REPORTING_ENABLED: "false"
   CORS_ORIGIN_ALLOW_ALL: "True"
-  CSRF_TRUSTED_ORIGINS: http://* https://*
+  CSRF_TRUSTED_ORIGINS: {{ .Values.netbox.csrf_trusted_origins | default "http://* https://*" | quote }}
   DB_HOST: netbox-postgres
   DB_NAME: netbox
   EMAIL_FROM: netbox@bar.com
@@ -298,23 +174,6 @@ metadata:
 ---
 apiVersion: v1
 data:
-  SURICATA_AUTO_ANALYZE_PCAP_FILES: "true"
-  SURICATA_AUTO_ANALYZE_PCAP_THREADS: "1"
-  SURICATA_PCAP_PROCESSOR: "true"
-  SURICATA_ROTATED_PCAP: "true"
-kind: ConfigMap
-metadata:
-  name: suricata-offline-env
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: suricata-rules
-
----
-apiVersion: v1
-data:
   AUTO_TAG: "true"
   LOG_CLEANUP_MINUTES: "360"
   PCAP_MONITOR_HOST: pcap-monitor
@@ -332,12 +191,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: var-local-catrust
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: yara-rules
 
 ---
 apiVersion: v1
@@ -398,15 +251,3 @@ data:
 kind: ConfigMap
 metadata:
   name: zeek-env
-
----
-apiVersion: v1
-data:
-  ZEEK_AUTO_ANALYZE_PCAP_FILES: "true"
-  ZEEK_AUTO_ANALYZE_PCAP_THREADS: "1"
-  ZEEK_CRON: "false"
-  ZEEK_PCAP_PROCESSOR: "true"
-  ZEEK_ROTATED_PCAP: "true"
-kind: ConfigMap
-metadata:
-  name: zeek-offline-env

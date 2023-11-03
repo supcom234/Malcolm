@@ -65,9 +65,11 @@ data:
         server logstash:9600;
       }
 
+      {{- if .Values.netbox.enabled }}
       upstream netbox {
         server netbox:8080;
       }
+      {{- end }}
 
       upstream extracted-file-http-server {
         server file-monitor:8440;
@@ -228,6 +230,7 @@ data:
           proxy_set_header Host file-monitor.malcolm.local;
         }
 
+        {{- if .Values.netbox.enabled }}
         # netbox
         location /netbox {
           include /etc/nginx/nginx_auth_rt.conf;
@@ -239,6 +242,7 @@ data:
           proxy_set_header X-Forwarded-Proto $scheme;
           proxy_set_header X-Remote-Auth $authenticated_user;
         }
+        {{- end }}
 
         # Fix cyberchef JS module(s)
         # https://localhost/arkime/session/190924-KgO9H30qhdREw7ltsDXn1Rgp/modules/Regex.js
