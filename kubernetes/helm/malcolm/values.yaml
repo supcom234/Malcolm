@@ -92,6 +92,17 @@ zeek_live:
   nodeSelector:
     cnaps.io/zeek-capture: "true"
 
+zeek_env:
+  #Set to none, all or interesting.
+  extract_mode: all
+  extracted_file_enable_capa: true
+  extracted_file_enable_clamav: true
+  extracted_file_enable_yara: true
+  extracted_file_http_server_enable: true
+  extracted_file_http_server_encrypt: true
+  extracted_file_preservation: quarantined
+
+
 pcap_live:
   enabled: true  
 
