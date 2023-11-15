@@ -435,17 +435,26 @@ def PodExec(
             retcode = -1
             output = []
             try:
+                container_name = service + "-container"
                 while True:
                     resp = client.read_namespaced_pod(
                         name=podName,
                         namespace=namespace,
                     )
+
                     if resp.status.phase != 'Pending':
                         break
+
+                # for container in resp.spec.containers:
+                #     if service in container.name:
+                #         container_name = service
+                #         break
+
                 resp = kubeImported.stream.stream(
                     client.connect_get_namespaced_pod_exec,
                     podName,
                     namespace,
+                    container=container_name,
                     command=get_iterable(command),
                     stdout=stdout,
                     stderr=stderr,
